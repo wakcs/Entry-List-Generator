@@ -38,6 +38,7 @@
         Ferrari_296_GT3,
         Lamborghini_Huracan_Evo2,
         Porsche_992_GT3_R,
+        McLaren_720S_GT3_2023,
         Alpine_A110_GT4_2018 = 50,
         Aston_Martin_Vantage_GT4_2018,
         Audi_R8_LMS_GT4_2018,

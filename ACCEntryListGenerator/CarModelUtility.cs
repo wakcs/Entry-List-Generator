@@ -45,6 +45,7 @@ namespace ACCEntryListGenerator
             {ECarModel.McLaren_570S_GT4_2016, "McLaren 570S GT4 (2016)"},
             {ECarModel.McLaren_650S_GT3_2015, "McLaren 650S GT3 (2015)"},
             {ECarModel.McLaren_720S_GT3_2019, "McLaren 720S GT3 (2019)"},
+            {ECarModel.McLaren_720S_GT3_2023, "McLaren 720S GT3 Evo (2023)"},
             {ECarModel.Mercedes_AMG_GT4_2016, "Mercedes AMG GT4 (2016)"},
             {ECarModel.Mercedes_AMG_GT3_2015, "Mercedes-AMG GT3 (2015)"},
             {ECarModel.Mercedes_AMG_GT3_2020, "Mercedes-AMG GT3 (2020)"},
