@@ -1,12 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace ACCEntryListGenerator
@@ -16,6 +8,7 @@ namespace ACCEntryListGenerator
         private readonly EntryListGenerator _entryListGenerator = new EntryListGenerator();
         private readonly FolderBrowserDialog _folderBrowserDialog = new FolderBrowserDialog();
         private readonly FileDialog _fileDialog = new OpenFileDialog();
+        private readonly FormCsvSettings formCsvSettings = new FormCsvSettings();
 
         private const string InvalidMessageHeader = "Invalid input";
 
@@ -135,17 +128,6 @@ namespace ACCEntryListGenerator
             }
         }
 
-        private void HandleOnExportClicked(object sender, EventArgs e)
-        {
-            entryListDataView.EndEdit();
-            if (!TryGenerateDataFromGridView()) return;
-
-            if (_folderBrowserDialog.ShowDialog() == DialogResult.OK)
-            {
-                _entryListGenerator.ExportEntryListToFile(_folderBrowserDialog.SelectedPath);
-            }
-        }
-
         private void HandleOnImportJsonClicked(object sender, EventArgs e)
         {
             _fileDialog.Filter = "JSON|*.json";
@@ -156,7 +138,18 @@ namespace ACCEntryListGenerator
             }
         }
 
-        private void HandleOnImportCsvClicked(object sender, EventArgs e)
+        private void HandleOnJsonExportClicked(object sender, EventArgs e)
+        {
+            entryListDataView.EndEdit();
+            if (!TryGenerateDataFromGridView()) return;
+
+            if (_folderBrowserDialog.ShowDialog() == DialogResult.OK)
+            {
+                _entryListGenerator.ExportEntryListToFile(_folderBrowserDialog.SelectedPath);
+            }
+        }
+
+        private void HandleOnCsvImportClicked(object sender, EventArgs e)
         {
             _fileDialog.Filter = "CSV|*.csv";
             if (_fileDialog.ShowDialog() == DialogResult.OK)
@@ -164,6 +157,11 @@ namespace ACCEntryListGenerator
                 _entryListGenerator.ImportEntryListFromCsvFile(_fileDialog.FileName);
                 UpdateGridViewFromData();
             }
+        }
+
+        private void HandleOnCsvSettingsClicked(object sender, EventArgs e)
+        {
+            formCsvSettings.ShowDialog();
         }
     }
 }

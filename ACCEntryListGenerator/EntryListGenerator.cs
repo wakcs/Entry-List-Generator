@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
+using ACCEntryListGenerator.Properties;
 using Microsoft.VisualBasic.FileIO;
 
 namespace ACCEntryListGenerator
@@ -176,19 +177,42 @@ namespace ACCEntryListGenerator
                                         shortNameIndex = i;
                                         break;
                                     case "Category":
-                                    case "Split":
                                         categoryIndex = i;
                                         break;
                                     case "Player ID":
-                                    case "Steam ID64":
                                         playerIdIndex = i;
                                         break;
-                                    case "Car":
                                     case "Car Model":
                                         carModelIndex = i;
                                         break;
                                     case "Car Number":
                                         carNumberIndex = i;
+                                        break;
+                                    default:
+                                        if (CsvEntryListGenerator.DoesFieldExistInSetting(fields[i], Settings.Default.firstNameFieldAlias))
+                                        {
+                                            firstNameIndex = i;
+                                        }
+                                        else if (CsvEntryListGenerator.DoesFieldExistInSetting(fields[i], Settings.Default.lastNameFieldAlias))
+                                        {
+                                            lastNameIndex = i;
+                                        }
+                                        else if (CsvEntryListGenerator.DoesFieldExistInSetting(fields[i], Settings.Default.shortNameFieldAlias))
+                                        {
+                                            shortNameIndex = i;
+                                        }
+                                        else if (CsvEntryListGenerator.DoesFieldExistInSetting(fields[i], Settings.Default.categoryFieldAlias))
+                                        {
+                                            categoryIndex = i;
+                                        }
+                                        else if (CsvEntryListGenerator.DoesFieldExistInSetting(fields[i], Settings.Default.playerIdFieldAlias))
+                                        {
+                                            playerIdIndex = i;
+                                        }
+                                        else if (CsvEntryListGenerator.DoesFieldExistInSetting(fields[i], Settings.Default.carModelFieldAlias))
+                                        {
+                                            carModelIndex = i;
+                                        }
                                         break;
                                 }
                             }
@@ -215,7 +239,6 @@ namespace ACCEntryListGenerator
                             switch (fields[categoryIndex])
                             {
                                 case nameof(EDriverCategory.Platinum):
-                                case "Pro":
                                     category = EDriverCategory.Platinum;
                                     break;
                                 case nameof(EDriverCategory.Gold):
@@ -225,11 +248,10 @@ namespace ACCEntryListGenerator
                                     category = EDriverCategory.Silver;
                                     break;
                                 case nameof(EDriverCategory.Bronze):
-                                case "AM":
                                     category = EDriverCategory.Bronze;
                                     break;
                                 default:
-                                    category = EDriverCategory.Bronze;
+                                    category = CsvEntryListGenerator.GetCategoryFromCustomSetting(fields[categoryIndex]);
                                     break;
                             }
                             

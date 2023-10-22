@@ -30,9 +30,12 @@ namespace ACCEntryListGenerator
         private void InitializeComponent()
         {
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
-            this.exportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.importJSONToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.importCSVToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.JsonRootToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.JsonImportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.JsonExportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.CsvRootToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.CsvImportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.CsvSettingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.entryListDataView = new System.Windows.Forms.DataGridView();
             this.IsAdmin = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.FirstName = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -49,35 +52,59 @@ namespace ACCEntryListGenerator
             // menuStrip1
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.exportToolStripMenuItem,
-            this.importJSONToolStripMenuItem,
-            this.importCSVToolStripMenuItem});
+            this.JsonRootToolStripMenuItem,
+            this.CsvRootToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(867, 24);
             this.menuStrip1.TabIndex = 0;
             this.menuStrip1.Text = "menuStrip1";
             // 
-            // exportToolStripMenuItem
+            // JsonRootToolStripMenuItem
             // 
-            this.exportToolStripMenuItem.Name = "exportToolStripMenuItem";
-            this.exportToolStripMenuItem.Size = new System.Drawing.Size(53, 20);
-            this.exportToolStripMenuItem.Text = "Export";
-            this.exportToolStripMenuItem.Click += new System.EventHandler(this.HandleOnExportClicked);
+            this.JsonRootToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.JsonImportToolStripMenuItem,
+            this.JsonExportToolStripMenuItem});
+            this.JsonRootToolStripMenuItem.Name = "JsonRootToolStripMenuItem";
+            this.JsonRootToolStripMenuItem.Size = new System.Drawing.Size(47, 20);
+            this.JsonRootToolStripMenuItem.Text = "JSON";
             // 
-            // importJSONToolStripMenuItem
+            // JsonImportToolStripMenuItem
             // 
-            this.importJSONToolStripMenuItem.Name = "importJSONToolStripMenuItem";
-            this.importJSONToolStripMenuItem.Size = new System.Drawing.Size(94, 20);
-            this.importJSONToolStripMenuItem.Text = "Import (JSON)";
-            this.importJSONToolStripMenuItem.Click += new System.EventHandler(this.HandleOnImportJsonClicked);
+            this.JsonImportToolStripMenuItem.Name = "JsonImportToolStripMenuItem";
+            this.JsonImportToolStripMenuItem.Size = new System.Drawing.Size(131, 22);
+            this.JsonImportToolStripMenuItem.Text = "Import File";
+            this.JsonImportToolStripMenuItem.Click += new System.EventHandler(this.HandleOnImportJsonClicked);
             // 
-            // importCSVToolStripMenuItem
+            // JsonExportToolStripMenuItem
             // 
-            this.importCSVToolStripMenuItem.Name = "importCSVToolStripMenuItem";
-            this.importCSVToolStripMenuItem.Size = new System.Drawing.Size(87, 20);
-            this.importCSVToolStripMenuItem.Text = "Import (CSV)";
-            this.importCSVToolStripMenuItem.Click += new System.EventHandler(this.HandleOnImportCsvClicked);
+            this.JsonExportToolStripMenuItem.Name = "JsonExportToolStripMenuItem";
+            this.JsonExportToolStripMenuItem.Size = new System.Drawing.Size(131, 22);
+            this.JsonExportToolStripMenuItem.Text = "Export File";
+            this.JsonExportToolStripMenuItem.Click += new System.EventHandler(this.HandleOnJsonExportClicked);
+            // 
+            // CsvRootToolStripMenuItem
+            // 
+            this.CsvRootToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.CsvImportToolStripMenuItem,
+            this.CsvSettingsToolStripMenuItem});
+            this.CsvRootToolStripMenuItem.Name = "CsvRootToolStripMenuItem";
+            this.CsvRootToolStripMenuItem.Size = new System.Drawing.Size(40, 20);
+            this.CsvRootToolStripMenuItem.Text = "CSV";
+            // 
+            // CsvImportToolStripMenuItem
+            // 
+            this.CsvImportToolStripMenuItem.Name = "CsvImportToolStripMenuItem";
+            this.CsvImportToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.CsvImportToolStripMenuItem.Text = "Import File";
+            this.CsvImportToolStripMenuItem.Click += new System.EventHandler(this.HandleOnCsvImportClicked);
+            // 
+            // CsvSettingsToolStripMenuItem
+            // 
+            this.CsvSettingsToolStripMenuItem.Name = "CsvSettingsToolStripMenuItem";
+            this.CsvSettingsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.CsvSettingsToolStripMenuItem.Text = "Import Settings";
+            this.CsvSettingsToolStripMenuItem.Click += new System.EventHandler(this.HandleOnCsvSettingsClicked);
             // 
             // entryListDataView
             // 
@@ -148,7 +175,55 @@ namespace ACCEntryListGenerator
             // CarModel
             // 
             this.CarModel.HeaderText = "Car Model";
-            this.CarModel.Items.AddRange(CarModelUtility.GetCarNames());
+            this.CarModel.Items.AddRange(new object[] {
+            "NONE",
+            "Alpine A110 GT4 (2018)",
+            "AMR V12 Vantage GT3 (2013)",
+            "AMR V8 Vantage (2019)",
+            "Aston Martin Vantage GT4 (2018)",
+            "Audi R8 LMS (2015)",
+            "Audi R8 LMS Evo (2019)",
+            "Audi R8 LMS GT3 Evo 2 (2022)",
+            "Audi R8 LMS GT4 (2018)",
+            "Bentley Continental GT3 (2015)",
+            "Bentley Continental GT3 (2018)",
+            "BMW M2 Club Sport Racing (2020)",
+            "BMW M4 GT3 (2022)",
+            "BMW M4 GT4 (2018)",
+            "BMW M6 GT3 (2017)",
+            "Chevrolet Camaro GT4 (2017)",
+            "Emil Frey Jaguar G3 (2012)",
+            "Ferrari 296 GT3 (2023)",
+            "Ferrari 488 Challenge Evo (2020)",
+            "Ferrari 488 GT3 (2018)",
+            "Ferrari 488 GT3 Evo (2020)",
+            "Ginetta G55 GT4 (2012)",
+            "Honda NSX GT3 (2017)",
+            "Honda NSX GT3 Evo (2019)",
+            "KTM X-Bow GT4 (2016)",
+            "Lamborghini Huracan Evo2 (2023)",
+            "Lamborghini Huracan GT3 (2015)",
+            "Lamborghini Huracan GT3 Evo",
+            "Lamborghini Huracan SuperTrofeo (2015)",
+            "Lamborghini Huracán SuperTrofeo EVO2 (2021)",
+            "Lexus RC F GT3 (2016)",
+            "Maserati MC GT4 (2016)",
+            "McLaren 570S GT4 (2016)",
+            "McLaren 650S GT3 (2015)",
+            "McLaren 720S GT3 (2019)",
+            "McLaren 720S GT3 Evo (2023)",
+            "Mercedes AMG GT4 (2016)",
+            "Mercedes-AMG GT3 (2015)",
+            "Mercedes-AMG GT3 (2020)",
+            "Nissan GT-R Nismo GT3 (2015)",
+            "Nissan GT-R Nismo GT3 (2018)",
+            "Porsche 718 Cayman GT4 Clubsport (2019)",
+            "Porsche 911 II GT3 R (2019)",
+            "Porsche 991 GT3 R (2018)",
+            "Porsche 991 II GT3 Cup (2017)",
+            "Porsche 992 GT3 Cup (2021)",
+            "Porsche 992 GT3 R (2023)",
+            "Reiter Engineering R-EX GT3 (2017)"});
             this.CarModel.Name = "CarModel";
             this.CarModel.Resizable = System.Windows.Forms.DataGridViewTriState.True;
             this.CarModel.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
@@ -175,9 +250,8 @@ namespace ACCEntryListGenerator
         #endregion
 
         private System.Windows.Forms.MenuStrip menuStrip1;
-        private System.Windows.Forms.ToolStripMenuItem exportToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem importJSONToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem importCSVToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem JsonRootToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem CsvRootToolStripMenuItem;
         private System.Windows.Forms.DataGridView entryListDataView;
         private System.Windows.Forms.DataGridViewCheckBoxColumn IsAdmin;
         private System.Windows.Forms.DataGridViewTextBoxColumn FirstName;
@@ -187,6 +261,10 @@ namespace ACCEntryListGenerator
         private System.Windows.Forms.DataGridViewTextBoxColumn PlayerId;
         private System.Windows.Forms.DataGridViewTextBoxColumn CarNumber;
         private System.Windows.Forms.DataGridViewComboBoxColumn CarModel;
+        private System.Windows.Forms.ToolStripMenuItem JsonImportToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem JsonExportToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem CsvImportToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem CsvSettingsToolStripMenuItem;
     }
 }
 
