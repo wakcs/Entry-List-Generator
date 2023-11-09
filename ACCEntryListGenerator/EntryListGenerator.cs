@@ -9,6 +9,24 @@ namespace ACCEntryListGenerator
 {
     public class EntryListGenerator
     {
+        private struct DriverImportData
+        {
+            public int? FirstNameIndex;
+            public int? LastNameIndex;
+            public int? ShortNameIndex;
+            public int? PlayerIdIndex;
+            public int? CategoryIndex;
+
+            public bool IsValidDriver()
+            {
+                return FirstNameIndex.HasValue &&
+                       LastNameIndex.HasValue &&
+                       ShortNameIndex.HasValue &&
+                       PlayerIdIndex.HasValue &&
+                       CategoryIndex.HasValue;
+            }
+        }
+
         public EntryListData EntryListData => _entryListData;
 
         private readonly JsonSerializerOptions _jsonSerializerOptions = new JsonSerializerOptions {WriteIndented = true};
@@ -119,7 +137,11 @@ namespace ACCEntryListGenerator
             try
             {
                 string jsonResult = JsonSerializer.Serialize(_entryListData, _jsonSerializerOptions);
-                File.WriteAllText(path + "/entrylist.json", jsonResult);
+                if (!path.EndsWith(".json"))
+                {
+                    path += "/entrylist.json";
+                }
+                File.WriteAllText(path, jsonResult);
             }
             catch (Exception e)
             {
@@ -149,13 +171,9 @@ namespace ACCEntryListGenerator
                     textFieldParser.TextFieldType = FieldType.Delimited;
                     textFieldParser.SetDelimiters(",");
 
-                    int firstNameIndex = 0,
-                        lastNameIndex = 0,
-                        shortNameIndex = 0,
-                        categoryIndex = 0,
-                        playerIdIndex = 0,
-                        carNumberIndex = 0,
+                    int carNumberIndex = 0,
                         carModelIndex = 0;
+                    List<DriverImportData> driverList = new List<DriverImportData>();
 
                     bool columnsInitiated = false;
                     while (!textFieldParser.EndOfData)
@@ -163,24 +181,25 @@ namespace ACCEntryListGenerator
                         string[] fields = textFieldParser.ReadFields();
                         if (!columnsInitiated)
                         {
+                            DriverImportData driver = new DriverImportData();
                             for (int i = 0; i < fields?.Length; i++)
                             {
                                 switch (fields[i])
                                 {
                                     case "First Name":
-                                        firstNameIndex = i;
+                                        driver.FirstNameIndex = i;
                                         break;
                                     case "Last Name":
-                                        lastNameIndex = i;
+                                        driver.LastNameIndex = i;
                                         break;
                                     case "Short Name":
-                                        shortNameIndex = i;
-                                        break;
-                                    case "Category":
-                                        categoryIndex = i;
+                                        driver.ShortNameIndex = i;
                                         break;
                                     case "Player ID":
-                                        playerIdIndex = i;
+                                        driver.PlayerIdIndex = i;
+                                        break;
+                                    case "Category":
+                                        driver.CategoryIndex = i;
                                         break;
                                     case "Car Model":
                                         carModelIndex = i;
@@ -191,23 +210,23 @@ namespace ACCEntryListGenerator
                                     default:
                                         if (CsvEntryListGenerator.DoesFieldExistInSetting(fields[i], Settings.Default.firstNameFieldAlias))
                                         {
-                                            firstNameIndex = i;
+                                            driver.FirstNameIndex = i;
                                         }
                                         else if (CsvEntryListGenerator.DoesFieldExistInSetting(fields[i], Settings.Default.lastNameFieldAlias))
                                         {
-                                            lastNameIndex = i;
+                                            driver.LastNameIndex = i;
                                         }
                                         else if (CsvEntryListGenerator.DoesFieldExistInSetting(fields[i], Settings.Default.shortNameFieldAlias))
                                         {
-                                            shortNameIndex = i;
-                                        }
-                                        else if (CsvEntryListGenerator.DoesFieldExistInSetting(fields[i], Settings.Default.categoryFieldAlias))
-                                        {
-                                            categoryIndex = i;
+                                            driver.ShortNameIndex = i;
                                         }
                                         else if (CsvEntryListGenerator.DoesFieldExistInSetting(fields[i], Settings.Default.playerIdFieldAlias))
                                         {
-                                            playerIdIndex = i;
+                                            driver.PlayerIdIndex = i;
+                                        }
+                                        else if (CsvEntryListGenerator.DoesFieldExistInSetting(fields[i], Settings.Default.categoryFieldAlias))
+                                        {
+                                            driver.CategoryIndex = i;
                                         }
                                         else if (CsvEntryListGenerator.DoesFieldExistInSetting(fields[i], Settings.Default.carModelFieldAlias))
                                         {
@@ -215,44 +234,22 @@ namespace ACCEntryListGenerator
                                         }
                                         break;
                                 }
+
+                                if (driver.IsValidDriver())
+                                {
+                                    driverList.Add(driver);
+                                    driver = new DriverImportData();
+                                }
                             }
                             columnsInitiated = true;
                         }
-                        else
+                        else if(driverList.Count > 0)
                         {
                             if(fields == null) continue;
+                            // Create car entry
                             if (!uint.TryParse(fields[carNumberIndex], out uint carNumber))
                             {
                                 continue;
-                            }
-
-                            if (!long.TryParse(fields[playerIdIndex], out long playerId))
-                            {
-                                continue;
-                            }
-
-                            string firstName = fields[firstNameIndex];
-                            string lastName = fields[lastNameIndex];
-                            string shortName = fields[shortNameIndex];
-
-                            EDriverCategory category;
-                            switch (fields[categoryIndex])
-                            {
-                                case nameof(EDriverCategory.Platinum):
-                                    category = EDriverCategory.Platinum;
-                                    break;
-                                case nameof(EDriverCategory.Gold):
-                                    category = EDriverCategory.Gold;
-                                    break;
-                                case nameof(EDriverCategory.Silver):
-                                    category = EDriverCategory.Silver;
-                                    break;
-                                case nameof(EDriverCategory.Bronze):
-                                    category = EDriverCategory.Bronze;
-                                    break;
-                                default:
-                                    category = CsvEntryListGenerator.GetCategoryFromCustomSetting(fields[categoryIndex]);
-                                    break;
                             }
                             
                             if (!CarModelUtility.TryGetCarModelForName(fields[carModelIndex], out ECarModel carModel))
@@ -264,9 +261,48 @@ namespace ACCEntryListGenerator
                                 }
                             }
 
-                            // Do assigning magic
                             AddEntry(carNumber, false, true, carModel);
-                            AddDriver(carNumber, playerId, firstName, lastName, shortName, category);
+
+                            // Create driver entries
+                            foreach (DriverImportData driver in driverList)
+                            {
+
+
+                                if (!long.TryParse(fields[driver.PlayerIdIndex.Value], out long playerId))
+                                {
+                                    continue;
+                                }
+
+                                string firstName = fields[driver.FirstNameIndex.Value];
+                                string lastName = fields[driver.LastNameIndex.Value];
+                                string shortName = fields[driver.ShortNameIndex.Value];
+
+                                EDriverCategory category;
+                                switch (fields[driver.CategoryIndex.Value])
+                                {
+                                    case nameof(EDriverCategory.Platinum):
+                                        category = EDriverCategory.Platinum;
+                                        break;
+                                    case nameof(EDriverCategory.Gold):
+                                        category = EDriverCategory.Gold;
+                                        break;
+                                    case nameof(EDriverCategory.Silver):
+                                        category = EDriverCategory.Silver;
+                                        break;
+                                    case nameof(EDriverCategory.Bronze):
+                                        category = EDriverCategory.Bronze;
+                                        break;
+                                    default:
+                                        category = CsvEntryListGenerator.GetCategoryFromCustomSetting(fields[driver.CategoryIndex.Value]);
+                                        break;
+                                }
+                                
+                                AddDriver(carNumber, playerId, firstName, lastName, shortName, category);
+                            }
+                        }
+                        else
+                        {
+                            // Return error no drivers found
                         }
                     }
                 }

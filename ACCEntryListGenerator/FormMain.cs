@@ -8,15 +8,20 @@ namespace ACCEntryListGenerator
         private readonly EntryListGenerator _entryListGenerator = new EntryListGenerator();
         private readonly FolderBrowserDialog _folderBrowserDialog = new FolderBrowserDialog();
         private readonly FileDialog _fileDialog = new OpenFileDialog();
+        private readonly SaveFileDialog _saveFileDialog = new SaveFileDialog();
         private readonly FormCsvSettings formCsvSettings = new FormCsvSettings();
 
         private const string InvalidMessageHeader = "Invalid input";
+        private const string JsonExtension = "JSON|*.json";
+        private const string CsvExtension = "CSV|*.csv";
 
         public FormMain()
         {
             InitializeComponent();
             CarModel.Items.Clear();
             CarModel.Items.AddRange(CarModelUtility.GetCarNames());
+            _saveFileDialog.Filter = JsonExtension;
+            _saveFileDialog.Title = "Export Entry List";
         }
 
         private bool TryGenerateDataFromGridView()
@@ -130,7 +135,7 @@ namespace ACCEntryListGenerator
 
         private void HandleOnImportJsonClicked(object sender, EventArgs e)
         {
-            _fileDialog.Filter = "JSON|*.json";
+            _fileDialog.Filter = JsonExtension;
             if (_fileDialog.ShowDialog() == DialogResult.OK)
             {
                 _entryListGenerator.ImportEntryListFromJsonFile(_fileDialog.FileName);
@@ -143,15 +148,15 @@ namespace ACCEntryListGenerator
             entryListDataView.EndEdit();
             if (!TryGenerateDataFromGridView()) return;
 
-            if (_folderBrowserDialog.ShowDialog() == DialogResult.OK)
+            if (_saveFileDialog.ShowDialog() == DialogResult.OK)
             {
-                _entryListGenerator.ExportEntryListToFile(_folderBrowserDialog.SelectedPath);
+                _entryListGenerator.ExportEntryListToFile(_saveFileDialog.FileName);
             }
         }
 
         private void HandleOnCsvImportClicked(object sender, EventArgs e)
         {
-            _fileDialog.Filter = "CSV|*.csv";
+            _fileDialog.Filter = CsvExtension;
             if (_fileDialog.ShowDialog() == DialogResult.OK)
             {
                 _entryListGenerator.ImportEntryListFromCsvFile(_fileDialog.FileName);
